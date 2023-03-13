@@ -3,9 +3,25 @@ import { Comment } from './Comment';
 import styles from './Post.module.css';
 import { format, formatDistanceToNow } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
-import { useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 
-export function Post({ author, content, publishedAt }) {
+interface Content {
+    type: 'paragraph' | 'link';
+    content: string;
+}
+
+interface PostProps {
+    author: {
+        name: string;
+        role: string;
+        avatarUrl: string;
+    },
+    publishedAt: Date;
+    content: Content[];
+}
+
+
+export function Post({ author, content, publishedAt }: PostProps) {
 
     const publishedDateFormatted = format(publishedAt, "dd 'de' LLLL 'às' HH:mm'h'", {
         locale: ptBR,
@@ -16,13 +32,14 @@ export function Post({ author, content, publishedAt }) {
         addSuffix: true,
     })
 
+
     //Array de comentários
-    const [comments, setComments] = useState([])
+    const [comments, setComments] = useState(['Post bacana, hein?'])
 
     const [newCommentText, setNewCommentText] = useState('')
 
 
-    function handleCreateNewComment() {
+    function handleCreateNewComment(event: FormEvent) {
         event.preventDefault();
         console.log('oi');
 
@@ -31,11 +48,11 @@ export function Post({ author, content, publishedAt }) {
 
     }
 
-    function handleNewCommentChange() {
+    function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
         setNewCommentText(event.target.value)
     }
 
-    function deleteComment(commentToDelete) {
+    function deleteComment(commentToDelete: string) {
         const commentsWithoutDeletedOne = comments.filter(comment => {
             return comment != commentToDelete;
         })
